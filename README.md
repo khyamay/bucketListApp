@@ -1,0 +1,1 @@
+Bucket List App using Ionic + Restify + MongoDB
