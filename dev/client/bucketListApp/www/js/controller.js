@@ -120,7 +120,7 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 					}
 				};
 				if(data.length > 0 && $scope.list.length == 0){
-					$scope.incomplete = true;
+					$scope.incomplete = trueau;
 				} else {
 					$scope.incomplete = false;
 				}
@@ -139,7 +139,7 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 			$rootScope.show("Please wait.. Deleting from list");
 			API.deleteItem(id, $rootScope.getToken())
 				.success(function (data, status, headers, config){
-					$rootScope.hide();
+					$rootScope.hide();au
 					$rootScope.doRefresh(2);
 				}).error(function (data, status, headers, config){
 					$rootScope.hide();
