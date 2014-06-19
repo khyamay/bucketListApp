@@ -8,27 +8,28 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 			password: ""
 		};
 
-		$scope.validateUser = function (){
-			var email = this.user.email;
-			var password = this.user.password;
-			if(!email || !password){
-				$rootScope.notify('Please enter valid credentials');
-				return false;
-			}
-			$rootScope.show('Please wait... Authenticating');
-			API.signin({
-				email: email,
-				password: password
-			}).success(function (data){
-				$rootScope.setToken(email);
-				$rootScope.hide();
-				$window.location.href = ('#/bucket/list');
-			}).error(funciton (error){
-				$rootScope.hide();
-				$rootScope.notify('Invalid Username or Password');
-			});
-		}
-	})
+		$scope.validateUser = function () {
+        var email = this.user.email;
+        var password = this.user.password;
+        if(!email || !password) {
+        	$rootScope.notify("Please enter valid credentials");
+        	return false;
+        }
+        $rootScope.show('Please wait.. Authenticating');
+        API.signin({
+            email: email,
+            password: password
+        }).success(function (data) {
+            $rootScope.setToken(email); // create a session kind of thing on the client side
+            $rootScope.hide();
+            $window.location.href = ('#/bucket/list');
+        }).error(function (error) {
+            $rootScope.hide();
+            $rootScope.notify("Invalid Username or password");
+        });
+    }
+
+})
 	.controller('SignUpCtrl', function ($rootScope, $scope, API, $window){
 		$scope.user = {
 			email: "",
@@ -168,7 +169,7 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 				item: item,
 				isCompleted: false,
 				user: $rootScope.getToken(),
-				created: Date.now();
+				created: Date.now(),
 				updated: Date.now()
 			}
 
