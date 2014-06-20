@@ -45,14 +45,14 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 				return false;
 			}
 			$rootScope.show("Please Wait.. Registering");
-			API.signUp({
+			API.signup({
 				email: email,
 				password: password,
 				name: uName
 			}).success(function (data){
 				$rootScope.setToken(email);
 				$rootScope.hide();
-				$window.location.href = ('#bucket/list');
+				$window.location.href = ('#/bucket/list');
 			}).error(function (error){
 				$rootScope.hide();
 				if(error.error && error.error.code == 11000){
@@ -65,42 +65,44 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 		}
 
 	})
-	.controller('myListCtrl', function ($rootScope, $scope, API, $timeout, $ionicModal, $window){
-		$rootScope.on('fetchAll', function (){
-			API.getAll($rootScope.getToken()).success(function (data, status, headers, config){
-				$rootScope.show('Please wait... Processing');
-				$scope.list = [];
-				for(var i= 0; i<data.length; i++){
-					if (data[i].isComplete == false){
-						$scope.list.push(data[i]);
-					}
-				};
-				if($scope.list.length == 0){
-					$scope.noData = true;
-				}
-				else {
-					$scope.noData = false;
-				}
-				$ionicModal.fromTemplateUrl('templates/newItem.html', function (modal){
-					$scope.newTemplate = modal;
-				});
+	.controller('myListCtrl', function ($rootScope, $scope, API, $timeout, $ionicModal, $window) {
+    $rootScope.$on('fetchAll', function(){
+            API.getAll($rootScope.getToken()).success(function (data, status, headers, config) {
+            $rootScope.show("Please wait... Processing");
+            $scope.list = [];
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].isCompleted == false) {
+                    $scope.list.push(data[i]);
+                }
+            };
+            if($scope.list.length == 0)
+            {
+                $scope.noData = true;
+            }
+            else
+            {
+                $scope.noData = false;
+            }
 
-				$scope.newTask = function (){
-					$scope.newTemplate.show();
-				};
+            $ionicModal.fromTemplateUrl('templates/newItem.html', function (modal) {
+                $scope.newTemplate = modal;
+            });
 
-				$rootScope.hide();
-			}).error(function (data, status, headers, config){
-				$rootScope.hide();
-				$rootScope.notify('Oops something went wrong!! Please try again later');
-			});
-		});
+            $scope.newTask = function () {
+                $scope.newTemplate.show();
+            };
+            $rootScope.hide();
+        }).error(function (data, status, headers, config) {
+            $rootScope.hide();
+            $rootScope.notify("Oops something went wrong!! Please try again later");
+        });
+    });
 		$rootScope.$broadcast('fetchAll');
 
 		$scope.markCompleted = function (id){
 			$rootScope.show('Please wait... Updating list');
 			API.putItem(id, {
-				isComplete: true
+				isCompleted: true
 			}, $rootScope.getToken())
 				.success(function (data, status, headers, config){
 					$rootScope.hide();
@@ -108,6 +110,17 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 				}).error(function (data, status, headers, config){
 					$rootScope.hide();
 					$rootScope.notify("Opps something new wrong!! please try again");
+				});
+		};
+		$scope.deleteItem = function (id){
+			$rootScope.show("Please wait... Deleting from List");
+			API.deleteItem(id, $rootScope.getToken())
+				.success(function (data, status, headers, config){
+					$rootScope.hide();
+					$rootScope.doRefresh(1);
+				}).error(function (data, status, headers, config){
+					$rootScope.hide();
+					$rootScope.notify("Opps something went wrong!! Please try again later ");
 				});
 		};
 	})
@@ -121,7 +134,7 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 					}
 				};
 				if(data.length > 0 && $scope.list.length == 0){
-					$scope.incomplete = trueau;
+					$scope.incomplete = true;
 				} else {
 					$scope.incomplete = false;
 				}
@@ -140,7 +153,7 @@ angular.module('bucketList.controllers', ['bucketList.services'])
 			$rootScope.show("Please wait.. Deleting from list");
 			API.deleteItem(id, $rootScope.getToken())
 				.success(function (data, status, headers, config){
-					$rootScope.hide();au
+					$rootScope.hide();
 					$rootScope.doRefresh(2);
 				}).error(function (data, status, headers, config){
 					$rootScope.hide();
